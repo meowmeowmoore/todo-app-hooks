@@ -17,13 +17,13 @@ const Footer = ({ buttons, todos }) => {
   });
 
   return (
-    <footer className="footer">
+    <>
       {todoCount}
       <ul className="filters">{btn}</ul>
       <button type="button" className="clear-completed" onClick={() => clearCompleted()}>
         Clear completed
       </button>
-    </footer>
+    </>
   );
 };
 
