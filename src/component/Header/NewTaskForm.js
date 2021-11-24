@@ -10,10 +10,12 @@ const NewTaskForm = () => {
 
   const transferToMain = (event) => {
     if (event.key === 'Enter') {
-      addTodo(todoTitle, todoTimerMin, todoTimerSec);
-      setTodoTitle('');
-      setTodoTimerMin('');
-      setTodoTimerSec('');
+      if (todoTitle !== '') {
+        addTodo(todoTitle, todoTimerMin, todoTimerSec);
+        setTodoTitle('');
+        setTodoTimerMin('');
+        setTodoTimerSec('');
+      }
     }
   };
 
