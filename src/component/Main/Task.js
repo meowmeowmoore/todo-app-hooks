@@ -3,11 +3,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import MyContext from '../Context';
 
-const Task = ({ title, id, date, timer, prevTimer, complete }) => {
+const Task = ({ title, id, date, timer, initialTimer, complete }) => {
   const [edit, setEdit] = useState(false);
   const [timerBtn, setTimerBtn] = useState(false);
   const [seconds, setSeconds] = useState(timer.min * 60 + +timer.sec);
-  const [disabledBtn, setDisabledBtn] = useState(false);
+  // const [disabledBtn, setDisabledBtn] = useState(false);
 
   const { deleteTodo, actionTodo, editingTitleTodo, outputTimer } = useContext(MyContext);
 
@@ -20,8 +20,8 @@ const Task = ({ title, id, date, timer, prevTimer, complete }) => {
   const min = Math.trunc(seconds / 60);
   const sec = seconds % 60;
 
-  const prevMin = Math.trunc(prevTimer.sec / 60);
-  const prevSec = prevTimer.sec % 60;
+  const initialMin = Math.trunc(initialTimer.sec / 60);
+  const initialSec = initialTimer.sec % 60;
 
   const tick = () => {
     if (seconds > 0) {
@@ -50,18 +50,10 @@ const Task = ({ title, id, date, timer, prevTimer, complete }) => {
   }, [seconds]);
 
   useEffect(() => {
-    if (seconds === 0) {
-      setDisabledBtn(true);
+    if (seconds === 0 && !complete && initialSec !== 0 && initialMin !== 0) {
+      actionTodo(id, 'complete');
     }
   }, [seconds]);
-
-  useEffect(() => {
-    if (complete) {
-      setDisabledBtn(true);
-    } else {
-      setDisabledBtn(false);
-    }
-  }, [complete]);
 
   useEffect(() => {
     if (complete) {
@@ -74,17 +66,30 @@ const Task = ({ title, id, date, timer, prevTimer, complete }) => {
   ) : null;
 
   const timerStop =
-    prevTimer.sec !== seconds ? (
+    initialTimer.sec !== seconds ? (
       <p className="timerStop">
-        {prevMin.toString().padStart(2, '0')}:{prevSec.toString().padStart(2, '0')}
+        {initialMin.toString().padStart(2, '0')}:{initialSec.toString().padStart(2, '0')}
       </p>
     ) : null;
 
   const timerWork =
     timerBtn || seconds !== 0 ? `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}` : null;
 
+  const disabledBtn = complete || (seconds === 0 && !complete);
+
+  const timerReset = () => {
+    setSeconds(initialMin * 60 + initialSec);
+  };
+
+  const onChangeCheckbox = () => {
+    if (complete) {
+      timerReset();
+    }
+    actionTodo(id, 'complete');
+  };
+
   const timerSet =
-    Number(prevTimer.sec) !== seconds || seconds !== 0 ? (
+    Number(initialTimer.sec) !== seconds || seconds !== 0 ? (
       <div className="description timer" role="presentation">
         <button
           type="button"
@@ -96,10 +101,10 @@ const Task = ({ title, id, date, timer, prevTimer, complete }) => {
         {timerWork || timerStop}
       </div>
     ) : null;
-
+  // console.log(disabledBtn);
   const task = (
     <div className="view">
-      <input className="toggle" type="checkbox" defaultChecked={complete} onChange={() => actionTodo(id, 'complete')} />
+      <input className="toggle" type="checkbox" checked={complete} onChange={onChangeCheckbox} />
       <div className="view-label">
         <div className="title" role="presentation">
           <p>{title}</p>

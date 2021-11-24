@@ -32,7 +32,7 @@ const TodoApp = () => {
           min: min.padStart(2, '0'),
           sec: sec.padStart(2, '0'),
         },
-        prevTimer: {
+        initialTimer: {
           min: min.padStart(2, '0'),
           sec: sec.padStart(2, '0'),
         },
