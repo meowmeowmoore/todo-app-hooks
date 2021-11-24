@@ -56,7 +56,17 @@ const Task = ({ title, id, date, timer, prevTimer, complete }) => {
   }, [seconds]);
 
   useEffect(() => {
-    setDisabledBtn(!disabledBtn);
+    if (complete) {
+      setDisabledBtn(true);
+    } else {
+      setDisabledBtn(false);
+    }
+  }, [complete]);
+
+  useEffect(() => {
+    if (complete) {
+      setTimerBtn(false);
+    }
   }, [complete]);
 
   const buttonEdit = !complete ? (
