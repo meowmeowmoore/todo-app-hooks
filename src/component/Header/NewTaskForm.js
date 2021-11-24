@@ -40,6 +40,7 @@ const NewTaskForm = () => {
           type="text"
           value={todoTitle}
           placeholder="Task"
+          maxLength="70"
           onChange={(event) => setTodoTitle(event.target.value)}
         />
         <input

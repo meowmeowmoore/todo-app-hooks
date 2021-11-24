@@ -456,3 +456,7 @@ html .clear-completed:active {
 .timerStop {
   text-decoration: line-through;
 }
+
+.view-label .title p {
+  word-wrap: break-word;
+}

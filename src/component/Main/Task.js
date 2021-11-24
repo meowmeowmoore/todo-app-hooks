@@ -55,6 +55,10 @@ const Task = ({ title, id, date, timer, prevTimer, complete }) => {
     }
   }, [seconds]);
 
+  useEffect(() => {
+    setDisabledBtn(!disabledBtn);
+  }, [complete]);
+
   const buttonEdit = !complete ? (
     <button type="button" aria-label="Edit" className="icon icon-edit" onClick={() => setEdit(true)} />
   ) : null;
@@ -88,7 +92,7 @@ const Task = ({ title, id, date, timer, prevTimer, complete }) => {
       <input className="toggle" type="checkbox" defaultChecked={complete} onChange={() => actionTodo(id, 'complete')} />
       <div className="view-label">
         <div className="title" role="presentation">
-          {title}
+          <p>{title}</p>
         </div>
         {timerSet}
         <div className="description">{distanceToNow}</div>
