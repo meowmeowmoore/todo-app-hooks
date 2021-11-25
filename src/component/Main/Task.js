@@ -7,7 +7,6 @@ const Task = ({ title, id, date, timer, initialTimer, complete }) => {
   const [edit, setEdit] = useState(false);
   const [timerBtn, setTimerBtn] = useState(false);
   const [seconds, setSeconds] = useState(timer.min * 60 + +timer.sec);
-  // const [disabledBtn, setDisabledBtn] = useState(false);
 
   const { deleteTodo, actionTodo, editingTitleTodo, outputTimer } = useContext(MyContext);
 
@@ -20,8 +19,7 @@ const Task = ({ title, id, date, timer, initialTimer, complete }) => {
   const min = Math.trunc(seconds / 60);
   const sec = seconds % 60;
 
-  const initialMin = Math.trunc(initialTimer.sec / 60);
-  const initialSec = initialTimer.sec % 60;
+  const initialSeconds = initialTimer.min * 60 + +initialTimer.sec;
 
   const tick = () => {
     if (seconds > 0) {
@@ -50,7 +48,7 @@ const Task = ({ title, id, date, timer, initialTimer, complete }) => {
   }, [seconds]);
 
   useEffect(() => {
-    if (seconds === 0 && !complete && initialSec !== 0 && initialMin !== 0) {
+    if (seconds === 0 && !complete && initialSeconds > 0) {
       actionTodo(id, 'complete');
     }
   }, [seconds]);
@@ -66,19 +64,31 @@ const Task = ({ title, id, date, timer, initialTimer, complete }) => {
   ) : null;
 
   const timerStop =
-    initialTimer.sec !== seconds ? (
+    complete && seconds === 0 ? (
       <p className="timerStop">
-        {initialMin.toString().padStart(2, '0')}:{initialSec.toString().padStart(2, '0')}
+        {initialTimer.min.toString().padStart(2, '0')}:{initialTimer.sec.toString().padStart(2, '0')}
+      </p>
+    ) : null;
+
+  const timerStopButNotEnd =
+    complete && seconds > 0 ? (
+      <p className="timerStop">
+        {min.toString().padStart(2, '0')}:{sec.toString().padStart(2, '0')}
       </p>
     ) : null;
 
   const timerWork =
-    timerBtn || seconds !== 0 ? `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}` : null;
+    !complete && seconds > 0 ? `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}` : null;
 
   const disabledBtn = complete || (seconds === 0 && !complete);
 
   const timerReset = () => {
-    setSeconds(initialMin * 60 + initialSec);
+    if (seconds === 0) {
+      outputTimer(initialTimer.min, initialTimer.sec, id);
+      setSeconds(initialTimer.min * 60 + +initialTimer.sec);
+    } else {
+      outputTimer(min, sec, id);
+    }
   };
 
   const onChangeCheckbox = () => {
@@ -98,10 +108,9 @@ const Task = ({ title, id, date, timer, initialTimer, complete }) => {
           aria-label="play"
           onClick={() => setTimerBtn(!timerBtn)}
         />
-        {timerWork || timerStop}
+        {timerWork || timerStop || timerStopButNotEnd}
       </div>
     ) : null;
-  // console.log(disabledBtn);
   const task = (
     <div className="view">
       <input className="toggle" type="checkbox" checked={complete} onChange={onChangeCheckbox} />
